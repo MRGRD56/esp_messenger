@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Обмен сообщениями</title>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const socket = io();
+                const form = document.querySelector('#message-form');
+                const input = document.querySelector('#message-input');
+                const messages = document.querySelector('#messages');
+
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const message = input.value.trim();
+                    if (message) {
+                        socket.emit('send_message', message);
+                        input.value = '';
+
+                        const li = document.createElement('li');
+                        li.textContent = message;
+                        messages.appendChild(li);
+                        messages.scrollTop = messages.scrollHeight;
+                    }
+                });
+
+                socket.on('new_message', (message) => {
+                    const li = document.createElement('li');
+                    li.textContent = message;
+                    messages.appendChild(li);
+                    messages.scrollTop = messages.scrollHeight;
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey && !e.altKey) {
+                        e.preventDefault();
+                        form.dispatchEvent(new Event('submit'));
+                    }
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <ul id="messages"></ul>
+        <form id="message-form">
+            <input id="message-input" type="text" placeholder="Введите сообщение">
+            <button type="submit">Отправить</button>
+        </form>
+    </body>
+</html>
