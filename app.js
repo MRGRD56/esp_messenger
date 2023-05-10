@@ -36,5 +36,5 @@ io.on('connection', (socket) => {
 
 const port = 3323;
 server.listen(port, '0.0.0.0', () => {
-    console.log(`Сервер работает на порту ${port}`);
+    console.log(`Сервер работает на http://localhost:${port}/`);
 });
