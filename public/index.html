@@ -68,12 +68,17 @@
                 background-color: #0056b3;
             }
 
-            li {
+            #messages li {
                 margin-bottom: 0.5rem;
                 padding: 0.5rem;
                 background-color: #f0f0f0;
                 border-radius: 5px;
                 border: 1px solid #e0e0e0;
+            }
+
+            #messages li[from=me] {
+                background-color: #cce5ff;
+                border: 1px solid #b8daff;
             }
         </style>
 
@@ -94,11 +99,24 @@
                     }
                 });
 
-                socket.on('new_message', (message) => {
+                socket.on('new_message', (message, from) => {
                     const li = document.createElement('li');
                     li.textContent = message;
+                    if (from) {
+                        li.setAttribute('from', from);
+                    }
                     messages.appendChild(li);
-                    messages.scrollTop = messages.scrollHeight;
+
+                    setTimeout(() => {
+                        messages.scrollTop = messages.scrollHeight;
+                        window.scrollTo(0, document.body.scrollHeight);
+                    }, 10);
+
+                    if (from !== 'me') {
+                        if ('vibrate' in navigator) {
+                            navigator.vibrate([400, 200, 400]);
+                        }
+                    }
                 });
 
                 input.addEventListener('keydown', (e) => {
@@ -113,7 +131,7 @@
     <body>
         <ul id="messages"></ul>
         <form id="message-form">
-            <input id="message-input" type="text" placeholder="Введите сообщение">
+            <input id="message-input" type="text" placeholder="Введите сообщение" autocomplete="off">
             <button type="submit">Отправить</button>
         </form>
     </body>

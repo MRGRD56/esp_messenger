@@ -29,7 +29,7 @@ async function sendMessage(message) {
 // Реализация long polling с использованием Socket.io
 io.on('connection', (socket) => {
     socket.on('send_message', (message) => {
-        io.emit('new_message', message);
+        io.emit('new_message', message, 'me');
         sendMessage(message);
     });
 });
